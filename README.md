@@ -10,3 +10,13 @@ Our theme is an autorunner platformer rhythm game where the player needs to perf
 <b>Art:</b> Peter Kallon, Gerardo Bonnet 
 
 <b>Music:</b> Ryan Stunkel 
+
+Project Name Ideas |
+------------------ |
+Rewound Running Remix | 
+Rewound Running Rhythm | 
+Rewind Rhythm | 
+Rewound Runner | 
+Rewinding Runner | 
+Running Rewind | 
+Rewinding the Rhythm | 
