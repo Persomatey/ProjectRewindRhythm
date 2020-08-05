@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\FollowPlayer.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\SFXController.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity Installs/2019.4.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

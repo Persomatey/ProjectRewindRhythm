@@ -10,7 +10,7 @@ public class FollowPlayer : MonoBehaviour
     void Start()
     {
         playerTrans = GameObject.Find("Player").transform;
-        offset = new Vector3(0, 1.5f, -10); 
+        offset = new Vector3(0, 0f, -10); 
     }
 
 

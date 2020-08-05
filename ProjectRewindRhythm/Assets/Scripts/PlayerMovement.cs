@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (jumpIndex < jumpPoints.Length && transform.position.x < jumpPoints[jumpIndex].x + 0.2f && allowedToJump)
         {
-            Debug.Log("<color=purple>Doing jump </color>" + jumpIndex + "<color=purple> because player is at </color>" + transform.position + "<color=purple> with </color>" + jumpForces[jumpIndex] + "<color=purple> force.</color>");
+            Debug.Log("<color=purple>Doing jump </color>" + jumpIndex + "<color=purple> because player is at </color>" + transform.position + "<color=purple> with </color>" + jumpForces[jumpIndex] + "<color=purple> force, running at </color>" + speedChanges[jumpIndex + 1] + "<color=purple> speed </color>");
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             playerRb.AddForce(Vector3.up * jumpForces[jumpIndex]);
@@ -60,21 +60,18 @@ public class PlayerMovement : MonoBehaviour
 
         if (allowedToCheck)
         { 
-            if (jumpIndex <= jumpPoints.Length && transform.position.y <= jumpPoints[jumpIndex + 1].y + generosity && transform.position.y > jumpPoints[jumpIndex].y && !pressedButton)
+            if (jumpIndex <= jumpPoints.Length && transform.position.y <= jumpPoints[jumpIndex + 1].y + generosity && transform.position.y > jumpPoints[jumpIndex + 1].y /*&& !pressedButton*/ && Input.GetKeyDown(KeyCode.Space))
             {
-                if ( Input.GetKeyDown(KeyCode.Space) )
-                {
-                    Debug.Log("<color=green>Spacebar pressed! Can sucessfully land.</color>"); 
-                    pressedButton = true;
-                    Debug.Log("<color=magenta> incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>"); 
-                    jumpIndex++;
-                    curSpeed = speedChanges[jumpIndex];
-                    allowedToJump = true;
-                    allowedToCheck = false;
-                    Debug.Log("<color=darkblue>No longer allowed to check</color>");
-                }
+                Debug.Log("<color=green>Spacebar pressed! Can sucessfully land.</color>"); 
+                //pressedButton = true;
+                Debug.Log("<color=magenta> incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>"); 
+                jumpIndex++;
+                curSpeed = speedChanges[jumpIndex];
+                allowedToJump = true;
+                allowedToCheck = false;
+                Debug.Log("<color=darkblue>No longer allowed to check</color>");
             }
-            else if (transform.position.y <= jumpPoints[jumpIndex + 1].y && !pressedButton)
+            else if (transform.position.y <= jumpPoints[jumpIndex + 1].y /*&& !pressedButton*/)
             {
                 Debug.Log("<color=orange>Spacebar not pressed. Player gets a strike.</color>");
                 strikes++;
@@ -87,18 +84,11 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (pressedButton && transform.position.y == jumpPoints[jumpIndex-1].y)
+        if (pressedButton && transform.position.y == jumpPoints[jumpIndex].y)
         {
             Debug.Log("Making presedButton false again"); 
             pressedButton = false; 
         }
-
-
-        //if (boolCatch[jumpIndex] && (transform.position.x <= jumpPoints[jumpIndex].x + 0.1f || transform.position.x >= jumpPoints[jumpIndex].x - 0.1f)) 
-        //{
-        //    Debug.Log("Allowing Jump Anyways"); 
-        //    allowedToJump = true; 
-        //}
     }
 
     void AllowToCheck()
