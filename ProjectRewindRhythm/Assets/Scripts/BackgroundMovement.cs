@@ -8,26 +8,26 @@ using UnityEngine;
 public class BackgroundMovement : MonoBehaviour
 {
     public float speed = .01f;
-    private Vector3 startPos;
-    private float repeatWidth;
-    // Start is called before the first frame update
+    //private Vector3 startPos;
+    //private float repeatWidth;
+
     void Start()
     {
-        //retrieve position
-        startPos = transform.position;
-        //retrieve object width
-        repeatWidth = GetComponent<BoxCollider>().size.x / 2;
         //Remove visible seam on plane edge
         GetComponent<Renderer>().material.mainTexture.wrapMode = TextureWrapMode.Clamp;
+        //retrieve position
+        //startPos = transform.position;
+        //retrieve object width
+        //repeatWidth = GetComponent<BoxCollider>().size.x;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         //Move gameobject slowly to left
         transform.Translate(Vector3.left * Time.deltaTime * speed);
         //Reset background position for continued scrolling
-        if (transform.position.x < startPos.x - repeatWidth)
-            transform.position = startPos;
+        /*if (transform.position.x < startPos.x - repeatWidth)
+            transform.position = startPos;*/
     }
 }
