@@ -10,11 +10,10 @@ public class BackgroundMovement : MonoBehaviour
     public float speed = .01f;
     //private Vector3 startPos;
     //private float repeatWidth;
+    public bool isUpper = false;
 
     void Start()
     {
-        //Remove visible seam on plane edge
-        GetComponent<Renderer>().material.mainTexture.wrapMode = TextureWrapMode.Clamp;
         //retrieve position
         //startPos = transform.position;
         //retrieve object width
@@ -26,8 +25,9 @@ public class BackgroundMovement : MonoBehaviour
     {
         //Move gameobject slowly to left
         transform.Translate(Vector3.left * Time.deltaTime * speed);
+
         //Reset background position for continued scrolling
-        /*if (transform.position.x < startPos.x - repeatWidth)
-            transform.position = startPos;*/
+        //if (transform.position.x < startPos.x - repeatWidth)
+        //    transform.position = new Vector3(transform.position.x + 40 * isUpper);
     }
 }
