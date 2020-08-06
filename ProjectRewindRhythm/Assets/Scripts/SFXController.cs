@@ -6,10 +6,16 @@ public class SFXController : MonoBehaviour
 {
     private AudioSource source; 
     public AudioClip sfxClip;
-    public float[] sfxTimings; 
-    public int sfxIndex; 
+    public float[] sfxTimings;
+    private int sfxIndex;
+    public float startDelay; 
 
     void Start()
+    {
+        Invoke("StartAudio", startDelay); 
+    }
+
+    public void StartAudio()
     {
         source = GetComponent<AudioSource>(); 
         sfxIndex = 0; 
