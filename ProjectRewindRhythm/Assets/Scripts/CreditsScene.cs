@@ -16,13 +16,15 @@ public class CreditsScene : MonoBehaviour
     public Transform textObj3;
     public Transform textObj4;
     public Transform textObj5;
+    public Transform textObj6;
+    public Transform textObj7;
 
     void Start()
     {
         source = GetComponent<AudioSource>();
         source.PlayOneShot(song, 2);
         source.PlayOneShot(scratch, 0.5f);
-        Invoke("StartLevel", 1.8f);
+        Invoke("StartLevel", 2f);
         speed = 13; 
     }
 
@@ -33,6 +35,8 @@ public class CreditsScene : MonoBehaviour
         textObj3.Translate(-Vector3.up * Time.deltaTime * speed); 
         textObj4.Translate(-Vector3.up * Time.deltaTime * speed);
         textObj5.Translate(-Vector3.up * Time.deltaTime * speed);
+        textObj6.Translate(-Vector3.up * Time.deltaTime * speed);
+        textObj7.Translate(-Vector3.up * Time.deltaTime * speed);
     }
 
     void StartLevel()
