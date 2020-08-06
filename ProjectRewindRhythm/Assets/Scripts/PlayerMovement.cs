@@ -7,12 +7,27 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody playerRb;
-    private int jumpIndex;
+    public int jumpIndex;
+    [Header("Lose & Win Stuff")]
+    public GameObject gameOver1;
+    public GameObject gameOver2;
+    public GameObject gameOver3;
+    public GameObject gameOver4;
+    public GameObject win1;
+    public GameObject win2;
+    public GameObject win3;
+    public GameObject win4;
+    public GameObject win5;
+    public GameObject win6;
+    public GameObject win7;
+    public GameObject win8;
+    public GameObject win9;
+    public GameObject win10;
+    public GameObject comboTitle; 
     [Header("Strikes")]
     public GameObject strike1;
     public GameObject strike2;
     public GameObject strike3;
-    public Text comboText; 
     [Header("Jump Locations")]
     public Vector3[] jumpPoints;
     [Header("Jump Forces")]
@@ -22,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     //[Header("Bool CAtch")]
     //public bool[] boolCatch;
     [Header("Other Variables")]
+    public Text comboText;
     private AudioSource source;
     private GameObject otherSource; 
     public AudioClip landSFX;
@@ -45,7 +61,12 @@ public class PlayerMovement : MonoBehaviour
     private bool onlyLogOnce;
     public int combo;
     public int comboHeal;
-    private bool playedComboSFX; 
+    private bool playedComboSFX;
+    public int highestCombo; 
+    public int score;
+    private bool gameWon;
+    public int totalJumpsMade;
+    public int amountToIncreaseRegularly; 
 
     void Start()
     {
@@ -54,24 +75,43 @@ public class PlayerMovement : MonoBehaviour
         strike1.SetActive(false);
         strike2.SetActive(false);
         strike3.SetActive(false);
+        gameOver1.SetActive(false);
+        gameOver2.SetActive(false);
+        gameOver3.SetActive(false);
+        gameOver4.SetActive(false);
+        win1.SetActive(false);
+        win2.SetActive(false);
+        win3.SetActive(false);
+        win4.SetActive(false);
+        win5.SetActive(false);
+        win6.SetActive(false);
+        win7.SetActive(false);
+        win8.SetActive(false);
+        win9.SetActive(false);
+        win10.SetActive(false);
         playedComboSFX = false; 
         source = GetComponent<AudioSource>();
         otherSource = GameObject.Find("AudioController"); 
         playerRb = GetComponent<Rigidbody>();
         jumpIndex = 0;
+        amountToIncreaseRegularly = 10; 
         pressedButton = false;
         allowedToJump = true;
         curSpeed = speedChanges[0];
-        Invoke("StartLevel", startDelay); 
+        Invoke("StartLevel", startDelay);
+        InvokeRepeating("RaiseScoreGradually", startDelay, 0.25f);
     }
 
     void Update()
     {
-        //veloc = playerRb.velocity.y;
-
         comboText.text = "" + combo;
 
-        if(combo < 10)
+        if (combo > highestCombo)
+        {
+            highestCombo = combo; 
+        }
+
+        if (combo < 10)
         {
             comboText.color = Color.white; 
             comboText.fontSize = 85; 
@@ -152,7 +192,11 @@ public class PlayerMovement : MonoBehaviour
             strike2.SetActive(true);
             strike3.SetActive(true);
             Destroy(otherSource); 
-            source.PlayOneShot(loseSFX, 0.2f); 
+            source.PlayOneShot(loseSFX, 0.2f);
+            gameOver1.SetActive(true);
+            gameOver2.SetActive(true);
+            gameOver3.SetActive(true);
+            gameOver4.SetActive(true);
         }
 
         if (gameStarted)
@@ -192,7 +236,9 @@ public class PlayerMovement : MonoBehaviour
                     allowedToChangeCheck = false;
                     justJumped = false;
                     combo++;
-                    comboHeal++; 
+                    comboHeal++;
+                    totalJumpsMade++; 
+                    score += 1000; 
                     Invoke("DelayedAllowToChangeCheck", landingTime);
                 }
                 else if (transform.position.y <= jumpPoints[jumpIndex + 1].y && justJumped)
@@ -207,12 +253,56 @@ public class PlayerMovement : MonoBehaviour
                     allowedToChangeCheck = false;
                     justJumped = false;
                     combo = 0;
-                    comboHeal = 0; 
+                    comboHeal = 0;
+                    score -= 1000;
                     Invoke("DelayedAllowToChangeCheck", landingTime); 
                 }
             }
         }
+
+        if (transform.position.x < -226)
+        {
+            gameWon = true; 
+        }
+
+        if (gameWon)
+        {
+            amountToIncreaseRegularly = 0;
+            if (transform.position.x > -233)
+            {
+                transform.Translate(Vector3.left * Time.deltaTime * 8);
+            }
+            else
+            {
+                win1.SetActive(true);
+                win2.SetActive(true);
+                win3.SetActive(true);
+                win4.SetActive(true);
+                win5.SetActive(true);
+                win6.SetActive(true);
+                win6.GetComponent<Text>().text = "" + highestCombo;
+                win7.SetActive(true);
+                win8.SetActive(true);
+                win8.GetComponent<Text>().text = "" + totalJumpsMade + "/34";
+                win9.SetActive(true);
+                win10.SetActive(true);
+                win10.GetComponent<Text>().text = "" + score;
+
+                strike1.SetActive(false);
+                strike2.SetActive(false);
+                strike3.SetActive(false);
+                comboTitle.SetActive(false);
+                comboText.gameObject.SetActive(false);
+            }
+
+            GameObject.Find("Main Camera").GetComponent<FollowPlayer>().following = false; 
+        }
     }  
+
+    void RaiseScoreGradually()
+    {
+        score += amountToIncreaseRegularly; 
+    }
 
     void DelayedChangeVals()
     {

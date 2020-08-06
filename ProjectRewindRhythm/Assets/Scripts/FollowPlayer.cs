@@ -5,7 +5,8 @@ using UnityEngine;
 public class FollowPlayer : MonoBehaviour
 {
     private Transform playerTrans;
-    private Vector3 offset; 
+    private Vector3 offset;
+    public bool following; 
 
     void Start()
     {
@@ -16,6 +17,9 @@ public class FollowPlayer : MonoBehaviour
 
     void Update()
     {
-        transform.position = playerTrans.position + offset; 
+        if(following)
+        {
+            transform.position = playerTrans.position + offset;
+        }
     }
 }

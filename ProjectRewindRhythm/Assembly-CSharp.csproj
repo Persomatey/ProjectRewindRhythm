@@ -63,11 +63,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\BWEffect.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\DiyEffect__FullOnly.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_BleedingColors.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_CRT.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_CorruptedVram.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_Scanner.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_Tint.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_Unsync.cs" />
+    <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderToTexture.cs" />
     <Compile Include="Assets\Scripts\Buttons.cs" />
     <Compile Include="Assets\Scripts\CreditsScene.cs" />
     <Compile Include="Assets\Scripts\FollowPlayer.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\SFXController.cs" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\BleedingColors.shader" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\BWDiffuse.shader" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\VUnsync.shader" />
+    <None Include="Assets\Realistic Glitches Lite\Documentation\Realistic Glitches.txt" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\Tint.shader" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\Distortion.shader" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\Shift.shader" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\Scanlines.shader" />
+    <None Include="Assets\Realistic Glitches Lite\Assets\Shaders\Distortion2D__FullOnly.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity Installs/2019.4.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
