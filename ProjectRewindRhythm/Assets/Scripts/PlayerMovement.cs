@@ -9,6 +9,12 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody playerRb;
     public int jumpIndex;
     [Header("Lose & Win Stuff")]
+    public Sprite[] idleAnim;
+    public Sprite[] runAnim;
+    public Sprite[] jumpAnim;
+    public Sprite[] spinAnim;
+    public Sprite[] tripAnim;
+    [Header("Lose & Win Stuff")]
     public GameObject gameOver1;
     public GameObject gameOver2;
     public GameObject gameOver3;
@@ -66,7 +72,23 @@ public class PlayerMovement : MonoBehaviour
     public int score;
     public bool gameWon;
     public int totalJumpsMade;
-    public int amountToIncreaseRegularly; 
+    public int amountToIncreaseRegularly;
+    [Header("Animation Stuff")]
+    private SpriteRenderer playerSprite; 
+    private Coroutine curAnim;
+    private bool isSpinning;
+    private bool called;
+    public bool isIdling;
+    public bool isRunning;
+    private bool isJumping;
+    private bool isTripping;
+    public bool doIdling;
+    public bool doRunning;
+    private bool doJumping;
+    private bool doTripping;
+    public bool[] allowToRun;
+    public bool isFalling;
+    private bool startedIdle; 
 
     void Start()
     {
@@ -100,10 +122,24 @@ public class PlayerMovement : MonoBehaviour
         curSpeed = speedChanges[0];
         Invoke("StartLevel", startDelay);
         InvokeRepeating("RaiseScoreGradually", startDelay, 0.25f);
+        playerSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        curAnim = StartCoroutine(SpinAnim());
+        called = false;
+        isIdling = false;
+        isRunning = false;
+        isJumping = false;
+        isTripping = false;
+        doIdling = false;
+        doRunning = false;
+        doJumping = false;
+        doTripping = false;
+        startedIdle = false; 
     }
 
     void Update()
     {
+        Animationer(); 
+
         comboText.text = "" + combo;
 
         if (combo > highestCombo)
@@ -167,6 +203,33 @@ public class PlayerMovement : MonoBehaviour
             curSpeed = speedChanges[jumpIndex];
         }
 
+        ////if (justJumped)
+        ////{
+        ////   allowToRun[jumpIndex] = false; 
+        ////}
+
+        //if (!isWithinGround() && playerRb.velocity.y < -1 && !allowToRun[jumpIndex])
+        //{
+        //    isFalling = true;
+        //}
+
+        //if (isFalling)
+        //{
+        //    Debug.Log("Stopping all coroutines");
+        //    StopCoroutine(curAnim);
+        //    playerSprite.sprite = jumpAnim[0];
+        //}
+
+        //if (!isWithinGround() && playerRb.velocity.y > 0)
+        //{
+        //    isFalling = false; 
+        //}
+
+        //if (!isFalling && !isSpinning && !isRunning)
+        //{
+        //    playerSprite.sprite = jumpAnim[1];
+        //}
+
         if (strikes == 0)
         {
             strike1.SetActive(false);
@@ -213,6 +276,31 @@ public class PlayerMovement : MonoBehaviour
             if (!tripped)
             {
                 transform.Translate(Vector3.left * Time.deltaTime * curSpeed);
+                if (isWithinGround() && allowToRun[jumpIndex])
+                {
+                    doRunning = true;
+                }
+
+                if (!isWithinGround())
+                {
+                    doRunning = false;
+                    isRunning = false; 
+
+                    if (playerRb.velocity.y < 0)
+                    {
+                        // falling
+                        Debug.Log("falling"); 
+                        StopCoroutine(curAnim);
+                        playerSprite.sprite = jumpAnim[0];
+                    }
+                    if (playerRb.velocity.y > 0)
+                    {
+                        // rising 
+                        //Debug.Log("Rising"); 
+                        //StopCoroutine(curAnim);
+                        //playerSprite.sprite = jumpAnim[1];
+                    }
+                }
             }
 
             if (jumpIndex < jumpPoints.Length && transform.position.x < jumpPoints[jumpIndex].x + 0.1f && strikes < 3 && !justJumped && transform.position.y <= jumpPoints[jumpIndex].y)
@@ -221,6 +309,13 @@ public class PlayerMovement : MonoBehaviour
                 GetComponent<Rigidbody>().velocity = Vector3.zero;
                 GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 playerRb.AddForce(Vector3.up * jumpForces[jumpIndex]);
+
+                Debug.Log("Stopping all coroutines");
+                StopCoroutine(curAnim);
+                Debug.Log("Rising");
+                StopCoroutine(curAnim);
+                playerSprite.sprite = jumpAnim[1]; 
+
                 allowedToJump = false;
                 justJumped = true; 
             }
@@ -231,6 +326,18 @@ public class PlayerMovement : MonoBehaviour
                 {
                     Debug.Log("<color=green>Spacebar pressed! Can sucessfully land.</color>");
                     source.PlayOneShot(landSFX, 3); 
+                    //if (jumpIndex == 2 || jumpIndex == 4 || jumpIndex == 8 || jumpIndex == 12 || jumpIndex == 13 || jumpIndex == 14 || jumpIndex == 19 || jumpIndex == 20 || jumpIndex == 23 || jumpIndex == 24 || jumpIndex == 25 || jumpIndex == 26 || jumpIndex == 27 || jumpIndex == 28 || jumpIndex == 29 || jumpIndex == 30)
+                    //{
+                    //    Debug.Log("At " + jumpIndex + " so making it true");
+                    //    allowToRun = true;
+                    //}
+                    //else
+                    //{
+                    //    Debug.Log("At " + jumpIndex + " so making it false");
+                    //    allowToRun = false;
+                    //    isRunning = false;
+                    //    doRunning = false;
+                    //}
                     Debug.Log("<color=magenta> incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>");
                     jumpIndex++;
                     allowedToJump = true;
@@ -248,12 +355,24 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("<color=orange>Spacebar not pressed. Player gets a strike.</color>");
                     source.PlayOneShot(strikeSFX, 3);
                     strikes++;
-                    Debug.Log("<color=magenta> incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>");
+                    //if (jumpIndex == 2 || jumpIndex == 4 || jumpIndex == 8 || jumpIndex == 12 || jumpIndex == 13 || jumpIndex == 14 || jumpIndex == 19 || jumpIndex == 20 || jumpIndex == 23 || jumpIndex == 24 || jumpIndex == 25 || jumpIndex == 26 || jumpIndex == 27 || jumpIndex == 28 || jumpIndex == 29 || jumpIndex == 30)
+                    //{
+                    //    Debug.Log("At " + jumpIndex + " so making it true");
+                    //    allowToRun = true;
+                    //}
+                    //else
+                    //{
+                    //    Debug.Log("At " + jumpIndex + " so making it false");
+                    //    allowToRun = false; 
+                    //    isRunning = false; 
+                    //    doRunning = false; 
+                    //}
+                    Debug.Log("<color=magenta>incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>");
                     jumpIndex++;
                     allowedToJump = true;
                     allowedToCheck = false;
                     allowedToChangeCheck = false;
-                    justJumped = false;
+                    justJumped = false; 
                     combo = 0;
                     comboHeal = 0;
                     score -= 1000;
@@ -262,13 +381,14 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (transform.position.x < -226)
+        if (transform.position.x < -230)
         {
             gameWon = true; 
         }
 
         if (gameWon)
         {
+            gameStarted = false; 
             amountToIncreaseRegularly = 0;
             if (transform.position.x > -233)
             {
@@ -295,11 +415,29 @@ public class PlayerMovement : MonoBehaviour
                 strike3.SetActive(false);
                 comboTitle.SetActive(false);
                 comboText.gameObject.SetActive(false);
+                
+                if (!startedIdle)
+                {
+                    StopCoroutine(curAnim);
+                    Debug.Log("<color=green>Starting idle coroutine</color>");
+                    curAnim = StartCoroutine(IdleAnim());
+                    startedIdle = true; 
+                }
             }
 
             GameObject.Find("Main Camera").GetComponent<FollowPlayer>().following = false; 
         }
     }  
+
+    bool isWithinGround()
+    {
+        if (playerRb.velocity.y < -1)
+        {
+            return false; 
+        }
+        //     transform.position.y <= jumpPoints[jumpIndex].y
+        return transform.position.y <= jumpPoints[jumpIndex].y; 
+    }
 
     void RaiseScoreGradually()
     {
@@ -320,4 +458,126 @@ public class PlayerMovement : MonoBehaviour
     {
         allowedToChangeCheck = true; 
     }
+
+    void IsStillZero()
+    {
+        if (isWithinGround() && !isRunning) 
+        {
+            Debug.Log("<color=darkblue>looks good</color>");
+            doRunning = true; 
+        }
+        else
+        {
+            Debug.Log("<color=darkblue>not good</color>");
+        }
+    }
+
+    void ResetAnimBools()
+    {
+        isIdling = false;
+        isRunning = false;
+        doIdling = false;
+        doRunning = false;
+    }
+
+    void Animationer()
+    {
+        if (doRunning && !isRunning)
+        {
+            Debug.Log("Starting Running"); 
+            curAnim = StartCoroutine(RunAnim()); 
+        }
+        
+        if (doIdling && !isIdling)
+        {
+            curAnim = StartCoroutine(IdleAnim());
+        }
+    }
+
+    IEnumerator IdleAnim()
+    {
+        Debug.Log("<color=green>idle animation is playing</color>");
+        Debug.Log("idleAnim[3]"); 
+        playerSprite.sprite = idleAnim[3];
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("idleAnim[2]");
+        playerSprite.sprite = idleAnim[2];
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("idleAnim[1]");
+        playerSprite.sprite = idleAnim[1];
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("idleAnim[0]");
+        playerSprite.sprite = idleAnim[0];
+        yield return new WaitForSeconds(0.1f);
+        curAnim = StartCoroutine(IdleAnim());
+    }
+
+    IEnumerator RunAnim()
+    {
+        isRunning = true; 
+        Debug.Log("Run Sprite 0"); 
+        playerSprite.sprite = runAnim[0];
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("Run Sprite 1");
+        playerSprite.sprite = runAnim[3];
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("Run Sprite 2");
+        playerSprite.sprite = runAnim[2];
+        yield return new WaitForSeconds(0.1f);
+        Debug.Log("Run Sprite 3");
+        playerSprite.sprite = runAnim[1];
+        yield return new WaitForSeconds(0.1f);
+        isRunning = false; 
+    }
+
+    IEnumerator JumpAnim()
+    {
+        playerSprite.sprite = jumpAnim[2];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = jumpAnim[1];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = jumpAnim[0];
+        yield return new WaitForSeconds(0.1f);
+    }
+
+    IEnumerator SpinAnim()
+    {
+        isSpinning = true; 
+        playerSprite.sprite = spinAnim[9];
+        yield return new WaitForSeconds(1f);
+        playerSprite.sprite = spinAnim[8];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[7];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[6];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[5];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[4];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[3];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[2];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[1];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = spinAnim[0];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = jumpAnim[2];
+        isSpinning = false; 
+    }
+
+    IEnumerator TripAnim()
+    {
+        playerSprite.sprite = tripAnim[3];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = tripAnim[2];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = tripAnim[1];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = tripAnim[0];
+        yield return new WaitForSeconds(0.1f);
+        curAnim = StartCoroutine(IdleAnim());
+    }
 }
+

@@ -17,7 +17,8 @@ public class FollowPlayer : MonoBehaviour
 
     void Update()
     {
-        if(following)
+        // -226
+        if (following && transform.position.x > -226)
         {
             transform.position = playerTrans.position + offset;
         }
