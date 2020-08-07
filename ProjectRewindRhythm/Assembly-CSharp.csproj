@@ -72,7 +72,9 @@
     <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_Tint.cs" />
     <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderEffect_Unsync.cs" />
     <Compile Include="Assets\Realistic Glitches Lite\Assets\Scripts\ShaderToTexture.cs" />
+    <Compile Include="Assets\Scripts\BackgroundMovement.cs" />
     <Compile Include="Assets\Scripts\Buttons.cs" />
+    <Compile Include="Assets\Scripts\ClampEdges.cs" />
     <Compile Include="Assets\Scripts\CreditsScene.cs" />
     <Compile Include="Assets\Scripts\FadeInController.cs" />
     <Compile Include="Assets\Scripts\FollowPlayer.cs" />

@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip loseSFX;
     public AudioClip comboSFX; 
     public float curSpeed;
-    private bool tripped;
+    public bool tripped;
     private bool pressedButton;
     public float generosity;
     public int strikes;
@@ -64,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
     private bool playedComboSFX;
     public int highestCombo; 
     public int score;
-    private bool gameWon;
+    public bool gameWon;
     public int totalJumpsMade;
     public int amountToIncreaseRegularly; 
 
@@ -140,6 +140,8 @@ public class PlayerMovement : MonoBehaviour
         if (!playedComboSFX && (combo == 10 || combo == 20 || combo == 30)) 
         {
             source.PlayOneShot(comboSFX, 2);
+            score += 5000;
+
             playedComboSFX = true; 
         }
 
