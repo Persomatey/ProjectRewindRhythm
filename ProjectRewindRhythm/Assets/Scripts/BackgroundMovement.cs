@@ -1,33 +1,34 @@
-﻿//Programmer: Gerardo Bonnet
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 
-
-public class BackgroundMovement : MonoBehaviour
+public class BackgroundMovementHunter : MonoBehaviour
 {
-    public float speed = .01f;
-    //private Vector3 startPos;
-    //private float repeatWidth;
-    public bool isUpper = false;
-
-    void Start()
-    {
-        //retrieve position
-        //startPos = transform.position;
-        //retrieve object width
-        //repeatWidth = GetComponent<BoxCollider>().size.x;
-    }
-
+    private float speed;
+    public float speedMod;
+    public bool allowedToMove;
 
     void Update()
     {
-        //Move gameobject slowly to left
-        transform.Translate(Vector3.left * Time.deltaTime * speed);
+        speed = (GameObject.Find("Player").GetComponent<PlayerMovement>().curSpeed / 35) * speedMod;
 
-        //Reset background position for continued scrolling
-        //if (transform.position.x < startPos.x - repeatWidth)
-        //    transform.position = new Vector3(transform.position.x + 40 * isUpper);
+        if (GameObject.Find("Player").GetComponent<PlayerMovement>().gameStarted && !GameObject.Find("Player").GetComponent<PlayerMovement>().gameWon && !GameObject.Find("Player").GetComponent<PlayerMovement>().tripped)
+        {
+            allowedToMove = true;
+        }
+        else
+        {
+            allowedToMove = false;
+        }
+
+        if (allowedToMove)
+        {
+            transform.Translate(-Vector3.left * Time.deltaTime * speed);
+        }
+        else
+        {
+            transform.Translate(-Vector3.left * Time.deltaTime * 0.05f);
+        }
     }
 }
