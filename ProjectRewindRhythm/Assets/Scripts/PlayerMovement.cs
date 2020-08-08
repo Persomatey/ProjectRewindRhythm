@@ -52,7 +52,6 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip loseSFX;
     public AudioClip comboSFX;
     public AudioClip glitchSFX;
-    private GameObject cam; 
     public float curSpeed;
     public bool tripped;
     private bool pressedButton;
@@ -238,11 +237,6 @@ public class PlayerMovement : MonoBehaviour
             strike2.SetActive(true);
             strike3.SetActive(true);
             Invoke("ActivateDeathScreens", 1f); 
-        }
-
-        if (tripped && cam.GetComponent<ShaderEffect_CorruptedVram>().enabled)
-        {
-            cam.GetComponent<ShaderEffect_CorruptedVram>().shift += 0.001f;
         }
 
         if (gameStarted)
@@ -509,8 +503,6 @@ public class PlayerMovement : MonoBehaviour
         gameOver2.SetActive(true);
         gameOver3.SetActive(true);
         gameOver4.SetActive(true);
-        cam = GameObject.Find("Main Camera");
-        cam.GetComponent<ShaderEffect_CorruptedVram>().enabled = true;
         source.PlayOneShot(glitchSFX, 1f);
     }
 

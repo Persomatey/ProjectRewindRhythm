@@ -13,7 +13,7 @@ public class FadeInController : MonoBehaviour
 
     void Update()
     {
-        fadeAmountM -= 0.003f;
+        fadeAmountM -= 0.01f;
         GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, fadeAmountM);
     } 
 }
