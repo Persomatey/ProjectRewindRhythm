@@ -22,8 +22,8 @@ public class CreditsScene : MonoBehaviour
     void Start()
     {
         source = GetComponent<AudioSource>();
-        source.PlayOneShot(song, 2);
-        source.PlayOneShot(scratch, 0.5f);
+        source.PlayOneShot(song, 1);
+        source.PlayOneShot(scratch, 0.25f);
         Invoke("StartLevel", 2f);
         speed = 13; 
     }

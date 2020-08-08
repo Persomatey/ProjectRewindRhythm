@@ -40,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     public int[] jumpForces; 
     [Header("Speed Changes")]
     public float[] speedChanges;
+    public float[] speedLocs; 
     //[Header("Bool CAtch")]
     //public bool[] boolCatch;
     [Header("Other Variables")]
@@ -49,7 +50,9 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip landSFX;
     public AudioClip strikeSFX;
     public AudioClip loseSFX;
-    public AudioClip comboSFX; 
+    public AudioClip comboSFX;
+    public AudioClip glitchSFX;
+    private GameObject cam; 
     public float curSpeed;
     public bool tripped;
     private bool pressedButton;
@@ -63,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
     public float landingTime;
     public bool allowedToCheck;
     public bool allowedToChangeCheck;
-    private bool justJumped;
+    public bool justJumped;
     private bool onlyLogOnce;
     public int combo;
     public int comboHeal;
@@ -88,7 +91,8 @@ public class PlayerMovement : MonoBehaviour
     private bool doTripping;
     public bool[] allowToRun;
     public bool isFalling;
-    private bool startedIdle; 
+    private bool startedIdle;
+    private bool onlyDieOnce;
 
     void Start()
     {
@@ -133,7 +137,8 @@ public class PlayerMovement : MonoBehaviour
         doRunning = false;
         doJumping = false;
         doTripping = false;
-        startedIdle = false; 
+        startedIdle = false;
+        onlyDieOnce = false; 
     }
 
     void Update()
@@ -175,7 +180,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (!playedComboSFX && (combo == 10 || combo == 20 || combo == 30)) 
         {
-            source.PlayOneShot(comboSFX, 2);
+            source.PlayOneShot(comboSFX, 0.5f);
             score += 5000;
 
             playedComboSFX = true; 
@@ -198,37 +203,10 @@ public class PlayerMovement : MonoBehaviour
             allowedToChangeCheck = false; 
         }
         
-        if (playerRb.velocity.y == 0)
+        if (transform.position.x <= speedLocs[jumpIndex])
         {
             curSpeed = speedChanges[jumpIndex];
         }
-
-        ////if (justJumped)
-        ////{
-        ////   allowToRun[jumpIndex] = false; 
-        ////}
-
-        //if (!isWithinGround() && playerRb.velocity.y < -1 && !allowToRun[jumpIndex])
-        //{
-        //    isFalling = true;
-        //}
-
-        //if (isFalling)
-        //{
-        //    Debug.Log("Stopping all coroutines");
-        //    StopCoroutine(curAnim);
-        //    playerSprite.sprite = jumpAnim[0];
-        //}
-
-        //if (!isWithinGround() && playerRb.velocity.y > 0)
-        //{
-        //    isFalling = false; 
-        //}
-
-        //if (!isFalling && !isSpinning && !isRunning)
-        //{
-        //    playerSprite.sprite = jumpAnim[1];
-        //}
 
         if (strikes == 0)
         {
@@ -251,17 +229,20 @@ public class PlayerMovement : MonoBehaviour
             strike3.SetActive(false);
         }
 
-        if (strikes == 3)
+        if (strikes == 3 && !onlyDieOnce)
         {
+            onlyDieOnce = true; 
+            Destroy(otherSource);
+            source.PlayOneShot(loseSFX, 0.75f);
             strike1.SetActive(true);
             strike2.SetActive(true);
             strike3.SetActive(true);
-            Destroy(otherSource); 
-            source.PlayOneShot(loseSFX, 0.2f);
-            gameOver1.SetActive(true);
-            gameOver2.SetActive(true);
-            gameOver3.SetActive(true);
-            gameOver4.SetActive(true);
+            Invoke("ActivateDeathScreens", 1f); 
+        }
+
+        if (tripped && cam.GetComponent<ShaderEffect_CorruptedVram>().enabled)
+        {
+            cam.GetComponent<ShaderEffect_CorruptedVram>().shift += 0.001f;
         }
 
         if (gameStarted)
@@ -270,18 +251,22 @@ public class PlayerMovement : MonoBehaviour
             {
                 tripped = true;
                 Debug.Log("<color=red>3 strikes, you're out!</color>");
+                Debug.Log("Stopping all coroutines");
+                StopCoroutine(curAnim);
+                Debug.Log("<color=red>playing trip animation</color>");
+                curAnim = StartCoroutine(TripAnim()); 
                 onlyLogOnce = true; 
             }
 
             if (!tripped)
             {
                 transform.Translate(Vector3.left * Time.deltaTime * curSpeed);
-                if (isWithinGround() && allowToRun[jumpIndex])
+                if (isWithinGround(jumpPoints[jumpIndex]) && allowToRun[jumpIndex])
                 {
                     doRunning = true;
                 }
 
-                if (!isWithinGround())
+                if (!isWithinGround(jumpPoints[jumpIndex]))
                 {
                     doRunning = false;
                     isRunning = false; 
@@ -303,7 +288,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (jumpIndex < jumpPoints.Length && transform.position.x < jumpPoints[jumpIndex].x + 0.1f && strikes < 3 && !justJumped && transform.position.y <= jumpPoints[jumpIndex].y)
+            if (jumpIndex < jumpPoints.Length && transform.position.x <= jumpPoints[jumpIndex].x + 0.1f  && strikes < 3 && !justJumped && isWithinGround(jumpPoints[jumpIndex]))
             {
                 Debug.Log("<color=purple>Doing jump </color>" + jumpIndex + "<color=purple> because player is at </color>" + transform.position + "<color=purple> with </color>" + jumpForces[jumpIndex] + "<color=purple> force, running at </color>" + speedChanges[jumpIndex + 1] + "<color=purple> speed </color>");
                 GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -322,10 +307,10 @@ public class PlayerMovement : MonoBehaviour
 
             if (allowedToCheck)
             {
-                if (jumpIndex <= jumpPoints.Length && transform.position.y <= jumpPoints[jumpIndex + 1].y + generosity && transform.position.y > jumpPoints[jumpIndex + 1].y  && justJumped && Input.GetKeyDown(KeyCode.Space))
+                if (jumpIndex <= jumpPoints.Length && transform.position.y <= jumpPoints[jumpIndex + 1].y + generosity && transform.position.y > jumpPoints[jumpIndex + 1].y  && justJumped && Input.GetKeyDown(KeyCode.Space) && !pressedButton)
                 {
                     Debug.Log("<color=green>Spacebar pressed! Can sucessfully land.</color>");
-                    source.PlayOneShot(landSFX, 3); 
+                    source.PlayOneShot(landSFX, 0.75f); 
                     //if (jumpIndex == 2 || jumpIndex == 4 || jumpIndex == 8 || jumpIndex == 12 || jumpIndex == 13 || jumpIndex == 14 || jumpIndex == 19 || jumpIndex == 20 || jumpIndex == 23 || jumpIndex == 24 || jumpIndex == 25 || jumpIndex == 26 || jumpIndex == 27 || jumpIndex == 28 || jumpIndex == 29 || jumpIndex == 30)
                     //{
                     //    Debug.Log("At " + jumpIndex + " so making it true");
@@ -338,22 +323,23 @@ public class PlayerMovement : MonoBehaviour
                     //    isRunning = false;
                     //    doRunning = false;
                     //}
-                    Debug.Log("<color=magenta> incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>");
-                    jumpIndex++;
-                    allowedToJump = true;
-                    allowedToCheck = false;
-                    allowedToChangeCheck = false;
-                    justJumped = false;
+                    //Debug.Log("<color=magenta> incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>");
+                    //jumpIndex++;
+                    //allowedToJump = true;
+                    //allowedToCheck = false;
+                    //allowedToChangeCheck = false;
+                    //justJumped = false;
                     combo++;
                     comboHeal++;
                     totalJumpsMade++; 
-                    score += 1000; 
+                    score += 1000;
+                    pressedButton = true; 
                     Invoke("DelayedAllowToChangeCheck", landingTime);
                 }
-                else if (transform.position.y <= jumpPoints[jumpIndex + 1].y && justJumped)
+                else if (justJumped & isWithinGround(jumpPoints[jumpIndex + 1]) && !pressedButton)
                 {
                     Debug.Log("<color=orange>Spacebar not pressed. Player gets a strike.</color>");
-                    source.PlayOneShot(strikeSFX, 3);
+                    source.PlayOneShot(strikeSFX, 0.75f);
                     strikes++;
                     //if (jumpIndex == 2 || jumpIndex == 4 || jumpIndex == 8 || jumpIndex == 12 || jumpIndex == 13 || jumpIndex == 14 || jumpIndex == 19 || jumpIndex == 20 || jumpIndex == 23 || jumpIndex == 24 || jumpIndex == 25 || jumpIndex == 26 || jumpIndex == 27 || jumpIndex == 28 || jumpIndex == 29 || jumpIndex == 30)
                     //{
@@ -372,12 +358,35 @@ public class PlayerMovement : MonoBehaviour
                     allowedToJump = true;
                     allowedToCheck = false;
                     allowedToChangeCheck = false;
-                    justJumped = false; 
+                    justJumped = false;
                     combo = 0;
                     comboHeal = 0;
                     score -= 1000;
                     Invoke("DelayedAllowToChangeCheck", landingTime); 
                 }
+
+                if (isWithinGround(jumpPoints[jumpIndex + 1]) && justJumped && pressedButton)
+                {
+                    Debug.Log("<color=green>Fully landed, reseting bools</color>");
+                    Debug.Log("<color=magenta> incrimenting jumpIndex from " + jumpIndex + " to " + (jumpIndex + 1) + "</color>");
+                    jumpIndex++;
+                    allowedToJump = true;
+                    allowedToCheck = false;
+                    allowedToChangeCheck = false;
+                    justJumped = false;
+                    pressedButton = false;
+                    Debug.Log("<color=green> allowedToJump = " + allowedToJump + " | allowedToCheck = " + allowedToCheck + " | allowedToChangeCheck = " + allowedToChangeCheck + "</color>");
+                }
+
+                //if (isWithinGround() && justJumped && pressedButton)
+                //{
+                //    justJumped = false;
+                //    allowedToJump = true;
+                //    allowedToCheck = false;
+                //    allowedToChangeCheck = false;
+                //    pressedButton = false;
+                //    jumpIndex++; 
+                //}
             }
         }
 
@@ -429,14 +438,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }  
 
-    bool isWithinGround()
+    bool isWithinGround(Vector3 passed)
     {
         if (playerRb.velocity.y < -1)
         {
             return false; 
         }
         //     transform.position.y <= jumpPoints[jumpIndex].y
-        return transform.position.y <= jumpPoints[jumpIndex].y; 
+        return transform.position.y <= passed.y; 
     }
 
     void RaiseScoreGradually()
@@ -461,7 +470,7 @@ public class PlayerMovement : MonoBehaviour
 
     void IsStillZero()
     {
-        if (isWithinGround() && !isRunning) 
+        if (isWithinGround(jumpPoints[jumpIndex]) && !isRunning) 
         {
             Debug.Log("<color=darkblue>looks good</color>");
             doRunning = true; 
@@ -492,6 +501,17 @@ public class PlayerMovement : MonoBehaviour
         {
             curAnim = StartCoroutine(IdleAnim());
         }
+    }
+
+    void ActivateDeathScreens()
+    {
+        gameOver1.SetActive(true);
+        gameOver2.SetActive(true);
+        gameOver3.SetActive(true);
+        gameOver4.SetActive(true);
+        cam = GameObject.Find("Main Camera");
+        cam.GetComponent<ShaderEffect_CorruptedVram>().enabled = true;
+        source.PlayOneShot(glitchSFX, 1f);
     }
 
     IEnumerator IdleAnim()
@@ -569,15 +589,22 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator TripAnim()
     {
-        playerSprite.sprite = tripAnim[3];
-        yield return new WaitForSeconds(0.1f);
-        playerSprite.sprite = tripAnim[2];
+        playerSprite.sprite = tripAnim[0];
         yield return new WaitForSeconds(0.1f);
         playerSprite.sprite = tripAnim[1];
         yield return new WaitForSeconds(0.1f);
         playerSprite.sprite = tripAnim[0];
         yield return new WaitForSeconds(0.1f);
-        curAnim = StartCoroutine(IdleAnim());
+        playerSprite.sprite = tripAnim[1];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = tripAnim[0];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = tripAnim[1];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = tripAnim[2];
+        yield return new WaitForSeconds(0.1f);
+        playerSprite.sprite = tripAnim[3];
+        yield return new WaitForSeconds(0.1f);
     }
 }
 
