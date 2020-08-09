@@ -31,7 +31,7 @@ public class MenuMovement_Background : MonoBehaviour
 
         if (transform.position.x >= -32.2)
         {
-            Debug.Log("Reset position"); 
+            //Debug.Log("Reset position"); 
             transform.position = startingPos; 
         }
     }

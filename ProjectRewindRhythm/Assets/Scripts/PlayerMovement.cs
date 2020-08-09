@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+using System.Linq;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -93,6 +96,10 @@ public class PlayerMovement : MonoBehaviour
     private bool startedIdle;
     private bool onlyDieOnce;
 
+    private string readPath = "Assets/Scripts/ModeToggle.txt";
+    string reed;
+    public int mode; // 0 = Easy | 1 = Hard 
+
     void Start()
     {
         onlyLogOnce = false; 
@@ -137,7 +144,9 @@ public class PlayerMovement : MonoBehaviour
         doJumping = false;
         doTripping = false;
         startedIdle = false;
-        onlyDieOnce = false; 
+        onlyDieOnce = false;
+
+        StatReader();
     }
 
     void Update()
@@ -237,6 +246,21 @@ public class PlayerMovement : MonoBehaviour
             strike2.SetActive(true);
             strike3.SetActive(true);
             Invoke("ActivateDeathScreens", 1f); 
+        }
+
+        if (mode == 1)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && !allowedToCheck)
+            {
+                source.PlayOneShot(strikeSFX, 0.75f);
+                strikes++;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) && allowedToCheck && transform.position.y >= jumpPoints[jumpIndex + 1].y + generosity)
+            {
+                source.PlayOneShot(strikeSFX, 0.75f);
+                strikes++;
+            }
         }
 
         if (gameStarted)
@@ -597,6 +621,21 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         playerSprite.sprite = tripAnim[3];
         yield return new WaitForSeconds(0.1f);
+    }
+
+    public void StatReader()
+    {
+        Debug.Log("Reading sheet...");
+        StreamReader reader = new StreamReader(readPath);
+
+        string line = reader.ReadLine();
+        reed = line;
+
+        reader.Close();
+
+        mode = Int32.Parse(line);
+
+        Debug.Log("...sheet read.");
     }
 }
 
