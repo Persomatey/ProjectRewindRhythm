@@ -10,9 +10,9 @@ Our theme is an autorunner platformer rhythm game where the player needs to perf
 <i>
 The game has bee sumitted to itch.io and the game jam. 
 
-Link to the itch.io page: https://persomatey.itch.io/rewound-running-remix
+Link to the itch.io page: https://persomatey.itch.io/rewound-running-remix 
 
-Link to the game jam submission page: https://itch.io/jam/brackeys-4/rate/724282
+Link to the game jam submission page: https://itch.io/jam/brackeys-4/rate/724282 
 </i>
 
 <b>Programming:</b> Hunter Goodin 
