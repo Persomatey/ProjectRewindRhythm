@@ -19,6 +19,8 @@ Our theme is an autorunner platformer rhythm game where the player needs to perf
 
 <b>Music:</b> Ryan Stunkel 
 
+---
+
 Project Name Ideas |
 ------------------ |
 Rewound Running Remix | 
