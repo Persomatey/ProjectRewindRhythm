@@ -1,9 +1,9 @@
 # Project: Rewind Rhythm 
-<i> A rhythm game for the Brackey's 2020.2 Game Jam themed "Rewind". 
+<i> A rhythm game for the Brackey's 2020.2 Game Jam themed "Rewind". </i>
+
+https://itch.io/jam/brackeys-4
 
 ![Image of R3](https://img.itch.zone/aW1nLzQwMTY5OTgucG5n/315x250%23c/77oO7X.png)
-  
-https://itch.io/jam/brackeys-4
 
 Our theme is an autorunner platformer rhythm game where the player needs to perform certain actions like jumping to the beat of the song. The catch is that the player has to perform these actions... in reverse! Instead of jumping, the player needs to time their lands, etc. </i> 
 
