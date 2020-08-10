@@ -1,5 +1,7 @@
 # Project: Rewind Rhythm 
 <i> A rhythm game for the Brackey's 2020.2 Game Jam themed "Rewind". 
+
+![Image of R3](https://img.itch.zone/aW1nLzQwMTY5OTgucG5n/315x250%23c/77oO7X.png)
   
 https://itch.io/jam/brackeys-4
 
@@ -30,5 +32,3 @@ Rhythm Rewound |
 Rewound Rhythm |
 
 <i> Ended up going with "Rewound Running Remix" or "R3" for short </i> 
-
-![Image of R3](https://img.itch.zone/aW1nLzQwMTY5OTgucG5n/315x250%23c/77oO7X.png)
