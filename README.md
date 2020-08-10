@@ -31,4 +31,4 @@ Rewound Rhythm |
 
 <i> Ended up going with "Rewound Running Remix" or "R3" for short </i> 
 
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+![Image of R3](https://Persomatey.github.com/ProjectRewindRhythm/Logo/R3Logo.png)
