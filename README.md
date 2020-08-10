@@ -28,3 +28,7 @@ Running Rewind |
 Rewinding the Rhythm | 
 Rhythm Rewound | 
 Rewound Rhythm |
+
+<i> Ended up going with "Rewound Running Remix" or "R3" for short </i> 
+
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
