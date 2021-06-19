@@ -3,7 +3,7 @@
 
 https://itch.io/jam/brackeys-4
 
-![Image of R3](https://img.itch.zone/aW1nLzQwMTY5OTgucG5n/315x250%23c/77oO7X.png)
+<img src="https://img.itch.zone/aW1nLzQwMTY5OTgucG5n/315x250%23c/77oO7X.png" width="347" height="250" />
 
 ## Details 
 
