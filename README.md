@@ -44,11 +44,9 @@ https://trello.com/b/xKEnovmB/project-rewind-rhythm
 	
 - <b>Programming</b>
 	- Hunter Goodin 
-
 - <b>Art</b>
 	- Peter Kallon
 	- Gerardo Bonnet 
-
 - <b>Music</b>
 	- Ryan Stunkel 
 
